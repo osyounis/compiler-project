@@ -7,5 +7,15 @@ to executable output in multiple target languages.
 __version__ = '1.0.0'
 __author__ = 'Omar Younis'
 
-# Imports will be added as modules are implemented
-__all__ = []
+from .core.language import Language
+from .core.parser import Parser, ParseResult
+from .core.preprocessor import Preprocessor
+
+__all__ = [
+    'Language',
+    'Parser',
+    'ParseResult',
+    'Preprocessor',
+    '__version__',
+    '__author__',
+]
