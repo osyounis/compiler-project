@@ -42,13 +42,14 @@ class Preprocessor:
         """Process source file and return token list.
 
         Reads the source file, removes comments, normalizes whitespace,
-        and tokenizes the content into a list of strings.
+        and tokenizes the content into a list of strings. All tokens are
+        converted to lowercase for case-insensitive parsing.
 
         Args:
             filepath: Path to the source file to process.
 
         Returns:
-            List of tokens (strings) extracted from the file.
+            List of tokens (strings, all lowercase) extracted from the file.
 
         Raises:
             FileNotFoundError: If the source file doesn't exist.
@@ -58,6 +59,7 @@ class Preprocessor:
         Example:
             >>> preprocessor = Preprocessor()
             >>> tokens = preprocessor.process_file('examples/valid/example1.src')
+            >>> # 'Program ABC;' becomes ['program', 'abc;']
         """
         try:
             with open(filepath, 'r', encoding='utf-8') as f:
@@ -75,20 +77,21 @@ class Preprocessor:
         """Process source code from string and return token list.
 
         Useful for testing and REPL-style interfaces where source code
-        is provided as a string rather than from a file.
+        is provided as a string rather than from a file. All tokens are
+        converted to lowercase for case-insensitive parsing.
 
         Args:
             source: Source code string to process.
 
         Returns:
-            List of tokens (strings) extracted from the source.
+            List of tokens (strings, all lowercase) extracted from the source.
 
         Example:
             >>> preprocessor = Preprocessor()
-            >>> source = "program test; var a : integer ;"
+            >>> source = "Program ABC; Var A : Integer ;"
             >>> tokens = preprocessor.process_string(source)
             >>> print(tokens)
-            ['program', 'test', ';', 'var', 'a', ':', 'integer', ';']
+            ['program', 'abc;', 'var', 'a', ':', 'integer', ';']
         """
         return self._process_content(source)
 
@@ -96,12 +99,13 @@ class Preprocessor:
         """Internal method to process content string.
 
         Performs comment removal, whitespace normalization, and tokenization.
+        All tokens are converted to lowercase for case-insensitive parsing.
 
         Args:
             content: Raw source code content.
 
         Returns:
-            List of tokens.
+            List of tokens (all lowercase).
         """
         # Remove all (* ... *) style comments
         content = self.COMMENT_PATTERN.sub('', content)
@@ -113,8 +117,8 @@ class Preprocessor:
             if line:  # Skip empty lines
                 # Normalize multiple spaces to single space
                 normalized = self.WHITESPACE_PATTERN.sub(' ', line)
-                # Split into tokens and add to list
-                tokens.extend(normalized.split())
+                # Split into tokens and convert to lowercase for case-insensitive parsing
+                tokens.extend(token.lower() for token in normalized.split())
 
         return tokens
 
