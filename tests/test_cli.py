@@ -169,3 +169,124 @@ class TestCLI:
         captured = capsys.readouterr()
         output = captured.out.lower() + captured.err.lower()
         assert "not found" in output or "error" in output
+
+    def test_no_command_specified(self, monkeypatch, capsys):
+        """Test running with no command shows help."""
+        # Mock sys.argv with no command
+        monkeypatch.setattr(sys, "argv", ["mini-compiler"])
+
+        # Run CLI
+        try:
+            main()
+        except SystemExit as e:
+            # Should exit with error code
+            assert e.code != 0
+
+        # Should show help
+        captured = capsys.readouterr()
+        assert "usage:" in captured.out.lower() or "usage:" in captured.err.lower()
+
+    def test_validate_verbose_mode(self, tmp_path, monkeypatch, capsys):
+        """Test validate command with verbose flag."""
+        source_file = tmp_path / "program.src"
+        source_file.write_text(
+            """
+            program abc;
+            var a : integer ;
+            begin
+                a = 5 ;
+            end
+        """
+        )
+
+        # Mock sys.argv with verbose flag
+        monkeypatch.setattr(
+            sys, "argv", ["mini-compiler", "validate", str(source_file), "-v"]
+        )
+
+        # Run CLI
+        try:
+            main()
+        except SystemExit:
+            pass
+
+        # Check verbose output
+        captured = capsys.readouterr()
+        output = captured.out + captured.err
+        assert "preprocessing" in output.lower() or "parsing" in output.lower()
+
+    def test_compile_verbose_mode(self, tmp_path, monkeypatch, capsys):
+        """Test compile command with verbose flag."""
+        source_file = tmp_path / "program.src"
+        source_file.write_text(
+            """
+            program abc;
+            var a : integer ;
+            begin
+                a = 42 ;
+            end
+        """
+        )
+        output_file = tmp_path / "output.py"
+
+        # Mock sys.argv with verbose flag
+        monkeypatch.setattr(
+            sys,
+            "argv",
+            [
+                "mini-compiler",
+                "compile",
+                str(source_file),
+                "--output",
+                "python",
+                "-o",
+                str(output_file),
+                "-v",
+            ],
+        )
+
+        # Run CLI
+        try:
+            main()
+        except SystemExit:
+            pass
+
+        # Check verbose output
+        captured = capsys.readouterr()
+        output = captured.out + captured.err
+        assert (
+            "preprocessing" in output.lower()
+            or "parsing" in output.lower()
+            or "generating" in output.lower()
+        )
+
+    def test_compile_without_output_flag(self, tmp_path, monkeypatch, capsys):
+        """Test compile command prints to stdout when no -o specified."""
+        source_file = tmp_path / "program.src"
+        source_file.write_text(
+            """
+            program abc;
+            var a : integer ;
+            begin
+                a = 10 ;
+            end
+        """
+        )
+
+        # Mock sys.argv without -o flag
+        monkeypatch.setattr(
+            sys,
+            "argv",
+            ["mini-compiler", "compile", str(source_file), "--output", "python"],
+        )
+
+        # Run CLI
+        try:
+            main()
+        except SystemExit:
+            pass
+
+        # Check stdout has generated code
+        captured = capsys.readouterr()
+        assert "a: int" in captured.out
+        assert "a = 10" in captured.out

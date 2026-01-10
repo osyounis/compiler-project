@@ -19,7 +19,7 @@ Mini Compiler is a full compiler pipeline that transforms programs written in a 
 - Adding comprehensive error detection and reporting (Part III requirement from course)
 - Implementing AST-based code generation (Part II requirement from course)
 - Building professional CLI with argparse and multiple commands
-- Creating 78-test suite with pytest achieving 73% coverage
+- Creating 85-test suite with pytest achieving 72% coverage (86% excluding legacy code)
 - Setting up CI/CD pipeline with GitHub Actions across 5 Python versions
 - Following Google Python Style Guide with full type hints and docstrings
 - Proper Python packaging with pip installability
@@ -40,7 +40,7 @@ Mini Compiler is a full compiler pipeline that transforms programs written in a 
 - **Python Code Generation**: Translates source to executable Python with type hints
 - **Error Reporting**: Detailed syntax and semantic error messages with line numbers
 - **CLI Interface**: Professional command-line tool with validation and compilation modes
-- **Comprehensive Testing**: 78 tests with pytest, achieving 73% coverage
+- **Comprehensive Testing**: 85 tests with pytest, achieving 72% coverage (86% excluding legacy code)
 - **CI/CD Pipeline**: Automated testing across Python 3.10-3.14 with GitHub Actions
 - **Professional Packaging**: Installable via pip with proper setup.py
 
@@ -225,11 +225,11 @@ The test suite includes:
 - **15 tests** for Parser (syntax validation, error detection)
 - **5 tests** for Semantic Analyzer (undeclared variables)
 - **14 tests** for Error Reporter (error collection and formatting)
-- **8 tests** for Code Generator (Python generation, execution validation)
+- **11 tests** for Code Generator (Python generation, base class, execution validation)
 - **9 tests** for Integration (end-to-end compilation pipeline)
-- **5 tests** for CLI (command-line interface)
+- **9 tests** for CLI (command-line interface, verbose mode, edge cases)
 
-**Coverage**: 73% overall (84% excluding legacy code)
+**Coverage**: 72% overall (86% excluding legacy code)
 
 ### Continuous Integration
 
