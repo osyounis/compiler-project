@@ -89,7 +89,10 @@ class ASTBuilder:
             if token == ',':
                 self._advance()
                 continue
-            var_names.append(token)
+            # Strip comma from token if it's attached (e.g., 'a,' -> 'a')
+            clean_token = token.rstrip(',')
+            if clean_token:  # Only add non-empty tokens
+                var_names.append(clean_token)
             self._advance()
         
         # Skip ':'
