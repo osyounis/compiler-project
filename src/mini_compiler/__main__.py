@@ -110,35 +110,86 @@ Examples:
             print(f"Tokens ({len(tokens)}): {' '.join(tokens[:20])}{'...' if len(tokens) > 20 else ''}", 
                   file=sys.stderr)
         
-        # Parse tokens
+        # Parse tokens (with semantic analysis for validate command)
         if args.verbose:
             print("Parsing...", file=sys.stderr)
-        
+
         parser_obj = Parser(language, tokens)
-        result = parser_obj.parse()
-        
+
         # Handle validate command
         if args.command == 'validate':
-            if result.accepted:
-                print("✓ Syntax valid - ready to compile")
-                sys.exit(0)
-            else:
+            result = parser_obj.parse_with_semantics()
+
+            if not result.accepted:
                 print(f"✗ Syntax error: {result.error_message}", file=sys.stderr)
                 sys.exit(1)
-        
+
+            # Check for semantic errors
+            if result.semantic_errors.has_errors():
+                print(f"✗ Semantic errors found ({result.semantic_errors.error_count()}):", file=sys.stderr)
+                result.semantic_errors.print_errors()
+                sys.exit(1)
+
+            print("✓ Program is valid - ready to compile")
+            sys.exit(0)
+
         # Handle compile command
         elif args.command == 'compile':
+            # Parse and build AST
+            result = parser_obj.parse_with_ast()
+
             if not result.accepted:
                 print(f"✗ Compilation failed: {result.error_message}", file=sys.stderr)
                 sys.exit(1)
-            
+
+            if not result.ast:
+                print("✗ Failed to build AST", file=sys.stderr)
+                sys.exit(1)
+
             if args.verbose:
                 print(f"Generating {args.output} code...", file=sys.stderr)
-            
-            # TODO: Code generation will be implemented in Phase 4
-            print("✗ Code generation not yet implemented", file=sys.stderr)
-            print("   This feature will be added in Phase 4 of the refactoring.", file=sys.stderr)
-            sys.exit(1)
+
+            # Select code generator based on output language
+            if args.output == 'python':
+                from .codegen.python_gen import PythonGenerator
+                generator = PythonGenerator()
+            elif args.output == 'cpp':
+                print("✗ C++ code generation not yet implemented", file=sys.stderr)
+                print("   Currently only Python is supported.", file=sys.stderr)
+                sys.exit(1)
+            elif args.output == 'java':
+                print("✗ Java code generation not yet implemented", file=sys.stderr)
+                print("   Currently only Python is supported.", file=sys.stderr)
+                sys.exit(1)
+            elif args.output == 'csharp':
+                print("✗ C# code generation not yet implemented", file=sys.stderr)
+                print("   Currently only Python is supported.", file=sys.stderr)
+                sys.exit(1)
+            else:
+                print(f"✗ Unknown output language: {args.output}", file=sys.stderr)
+                sys.exit(1)
+
+            # Generate code
+            try:
+                generated_code = generator.generate(result.ast)
+
+                # Output to file or stdout
+                if args.outfile:
+                    with open(args.outfile, 'w', encoding='utf-8') as f:
+                        f.write(generated_code)
+                    print(f"✓ Generated {args.output} code → {args.outfile}")
+                else:
+                    # Print to stdout
+                    print(generated_code)
+
+                sys.exit(0)
+
+            except Exception as e:
+                print(f"✗ Code generation failed: {e}", file=sys.stderr)
+                if args.verbose:
+                    import traceback
+                    traceback.print_exc()
+                sys.exit(1)
     
     except FileNotFoundError as e:
         print(f"Error: {e}", file=sys.stderr)

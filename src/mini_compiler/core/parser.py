@@ -7,6 +7,7 @@ using table-driven predictive parsing with an explicit stack.
 from typing import List, Optional, Set
 from .language import Language
 from ..utils.constants import EPSILON, END_MARKER
+from ..errors.error_reporter import ErrorReporter
 
 
 class ParseResult:
@@ -16,13 +17,17 @@ class ParseResult:
         accepted: Whether the input was syntactically valid.
         error_message: Description of error if rejected, None if accepted.
         position: Token position where error occurred, if applicable.
+        semantic_errors: ErrorReporter with semantic errors (if semantic analysis run).
+        ast: Abstract Syntax Tree root node (if AST built).
     """
 
     def __init__(
-        self, 
-        accepted: bool, 
+        self,
+        accepted: bool,
         error_message: Optional[str] = None,
-        position: Optional[int] = None
+        position: Optional[int] = None,
+        semantic_errors: Optional[ErrorReporter] = None,
+        ast=None
     ):
         """Initialize parse result.
 
@@ -30,10 +35,14 @@ class ParseResult:
             accepted: True if parsing succeeded, False otherwise.
             error_message: Error description if parsing failed.
             position: Token index where error occurred.
+            semantic_errors: ErrorReporter with semantic errors, if any.
+            ast: AST root node (Program), if built.
         """
         self.accepted = accepted
         self.error_message = error_message
         self.position = position
+        self.semantic_errors = semantic_errors or ErrorReporter()
+        self.ast = ast
 
 
 class Parser:
@@ -218,6 +227,81 @@ class Parser:
                     stack.append(symbol)
 
         return True, position + 1
+
+    def parse_with_semantics(self) -> ParseResult:
+        """Parse and perform semantic analysis.
+
+        This method first performs syntax analysis, and if successful,
+        runs semantic analysis to detect undeclared variables and other
+        semantic errors.
+
+        Returns:
+            ParseResult with both syntax and semantic error information.
+
+        Example:
+            >>> parser = Parser(language, tokens)
+            >>> result = parser.parse_with_semantics()
+            >>> if result.accepted and not result.semantic_errors.has_errors():
+            ...     print("Program is valid!")
+            >>> elif result.semantic_errors.has_errors():
+            ...     result.semantic_errors.print_errors()
+        """
+        # First, check syntax
+        syntax_result = self.parse()
+
+        if not syntax_result.accepted:
+            # Syntax error - return immediately
+            return syntax_result
+
+        # Syntax OK - run semantic analysis
+        from .semantic_analyzer import SemanticAnalyzer
+        analyzer = SemanticAnalyzer()
+        semantic_errors = analyzer.analyze(self._tokens)
+
+        # Create result with semantic errors
+        return ParseResult(
+            accepted=True,
+            semantic_errors=semantic_errors
+        )
+
+    def parse_with_ast(self) -> ParseResult:
+        """Parse and build Abstract Syntax Tree.
+
+        This method performs syntax analysis and, if successful,
+        builds an AST that can be used for code generation.
+
+        Returns:
+            ParseResult with AST (or error if parsing failed).
+
+        Example:
+            >>> parser = Parser(language, tokens)
+            >>> result = parser.parse_with_ast()
+            >>> if result.accepted and result.ast:
+            ...     print(f"Program: {result.ast.name}")
+            ...     print(f"Declarations: {len(result.ast.declarations)}")
+        """
+        # First, check syntax
+        syntax_result = self.parse()
+
+        if not syntax_result.accepted:
+            # Syntax error - return immediately
+            return syntax_result
+
+        # Syntax OK - build AST
+        from .ast_builder import ASTBuilder
+        builder = ASTBuilder(self._tokens)
+
+        try:
+            ast = builder.build()
+            return ParseResult(
+                accepted=True,
+                ast=ast
+            )
+        except Exception as e:
+            return ParseResult(
+                accepted=False,
+                error_message=f"Failed to build AST: {e}"
+            )
 
 
 # Legacy compatibility classes - marked for deprecation
