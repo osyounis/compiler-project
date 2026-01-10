@@ -1,0 +1,2 @@
+# Runtime dependencies for mini-compiler
+# Currently no external dependencies - uses only Python standard library

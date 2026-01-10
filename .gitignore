@@ -205,3 +205,22 @@ cython_debug/
 marimo/_static/
 marimo/_lsp/
 __marimo__/
+
+# Mac File Types
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Claude AI File/Directories to ignore
+.claude/
+CLAUDE.md
+claude_plan.md
+.mcp.json
+*.claude.md
+.claudefiles
+
+# Mini Compiler specific
+output/
+*.generated.*
+examples/**/*_preprocessed.txt
+examples/output/

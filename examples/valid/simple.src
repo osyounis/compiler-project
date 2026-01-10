@@ -1,0 +1,6 @@
+program abc;
+var a : integer ;
+begin
+    a = 5 ;
+    print ( a ) ;
+end
