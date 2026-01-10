@@ -4,28 +4,28 @@ This module contains the Language class which encapsulates the formal grammar
 specification and predictive parsing table for the simple programming language.
 """
 
-from typing import Dict, List, Set, Optional
+from typing import Dict, List, Optional, Set
 
 
 class Language:
     """Represents a formal language with predictive parsing table.
-    
+
     This class encapsulates the grammar rules and parsing table for the
     simple programming language. It provides methods to query the parsing
     table during predictive parsing using an LL(1) parsing algorithm.
-    
+
     The language grammar includes:
     - Variable declarations (integer type only)
     - Assignment statements with arithmetic expressions
     - Print statements with optional labels
     - Comments (removed during preprocessing)
-    
+
     Attributes:
         _starting_state: The start symbol of the grammar (e.g., 'Program').
         _parsing_table: 2D table mapping (non-terminal, terminal) to productions.
         _indexes: Maps grammar symbols to row/column indices in parsing table.
         _reserved_words: Set of keywords that cannot be used as identifiers.
-    
+
     Example:
         >>> from mini_compiler.utils.constants import (
         ...     PARSING_TABLE, SYMBOL_INDICES, RESERVED_WORDS
@@ -35,14 +35,16 @@ class Language:
         >>> print(production)  # Returns the production to apply
         '+ Term ExpressionTail'
     """
-    
-    def __init__(self,
-                 starting_state: str,
-                 parsing_table: List[List[Optional[str]]],
-                 indexes: Dict[str, int],
-                 reserved: Set[str]) -> None:
+
+    def __init__(
+        self,
+        starting_state: str,
+        parsing_table: List[List[Optional[str]]],
+        indexes: Dict[str, int],
+        reserved: Set[str],
+    ) -> None:
         """Initialize the Language with grammar specification.
-        
+
         Args:
             starting_state: The start symbol of the grammar (e.g., 'Program').
             parsing_table: The predictive parsing table as a 2D list.
@@ -55,7 +57,7 @@ class Language:
                 non-terminals map to row indices.
             reserved: Set of reserved keywords that cannot be used as
                 user-defined identifiers.
-        
+
         Raises:
             KeyError: If starting_state is not in indexes.
         """
@@ -66,7 +68,7 @@ class Language:
 
     def get_indexes(self) -> Dict[str, int]:
         """Return the symbol-to-index mapping.
-        
+
         Returns:
             Dictionary mapping grammar symbols to their indices in the
             parsing table. Terminals map to column indices, non-terminals
@@ -76,22 +78,22 @@ class Language:
 
     def get_control_chars(self, non_terminal: str, terminal: str) -> Optional[str]:
         """Retrieve production from parsing table.
-        
+
         Given a non-terminal on the stack and a terminal from input,
         returns the production to apply according to the LL(1) parsing
         table. This is the core lookup operation for table-driven parsing.
-        
+
         Args:
             non_terminal: The non-terminal symbol from stack top.
                 Must be a valid non-terminal in the grammar.
             terminal: The current terminal from input stream.
                 Must be a valid terminal in the grammar.
-        
+
         Returns:
             Production string to push onto stack (space-separated symbols),
             'lambda' for epsilon (ε) productions (pop without pushing),
             or empty string '' if no valid production (syntax error).
-        
+
         Example:
             >>> lang.get_control_chars('Expression', 'a')
             'Term ExpressionTail'
@@ -106,7 +108,7 @@ class Language:
 
     def get_starting_state(self) -> str:
         """Return the grammar's start symbol.
-        
+
         Returns:
             The start symbol (root non-terminal) of the grammar,
             typically 'Program'.
@@ -115,10 +117,10 @@ class Language:
 
     def is_reserved_word(self, word: str) -> bool:
         """Check if a word is a reserved keyword.
-        
+
         Args:
             word: The word to check.
-        
+
         Returns:
             True if word is a reserved keyword, False otherwise.
         """
@@ -126,7 +128,7 @@ class Language:
 
     def get_reserved_words(self) -> Set[str]:
         """Return the set of reserved keywords.
-        
+
         Returns:
             Set of all reserved keywords in the language.
         """

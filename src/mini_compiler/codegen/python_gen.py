@@ -24,7 +24,7 @@ class PythonGenerator(CodeGenerator):
         b = (a + 10)
         print(b)
     """
-    
+
     def visit_program(self, node):
         """Generate Python program structure.
 
@@ -49,23 +49,23 @@ class PythonGenerator(CodeGenerator):
         # Statements
         for stmt in node.statements:
             stmt.accept(self)
-    
+
     def visit_declaration(self, node):
         """Generate Python variable declarations.
-        
+
         In Python, we use type hints: variable_name: int
         """
         for name in node.names:
-            self._emit(f'{name}: int')
-    
+            self._emit(f"{name}: int")
+
     def visit_assignment(self, node):
         """Generate Python assignment statement.
-        
+
         Format: variable = expression
         """
         expr_code = node.expression.accept(self)
-        self._emit(f'{node.variable} = {expr_code}')
-    
+        self._emit(f"{node.variable} = {expr_code}")
+
     def visit_print(self, node):
         """Generate Python print statement.
 
@@ -76,35 +76,35 @@ class PythonGenerator(CodeGenerator):
         if node.label:
             # Has label like '"value=",'
             # Extract just the text between quotes
-            label = node.label.replace('"', '').replace(',', '')
+            label = node.label.replace('"', "").replace(",", "")
             self._emit(f'print(f"{label}{{{node.variable}}}")')
         else:
-            self._emit(f'print({node.variable})')
-    
+            self._emit(f"print({node.variable})")
+
     def visit_binary_expression(self, node):
         """Generate Python binary expression.
-        
+
         Format: (left operator right)
         Parentheses ensure correct precedence.
-        
+
         Returns:
             String with expression code.
         """
         left_code = node.left.accept(self)
         right_code = node.right.accept(self)
-        return f'({left_code} {node.operator} {right_code})'
-    
+        return f"({left_code} {node.operator} {right_code})"
+
     def visit_number(self, node):
         """Generate Python number literal.
-        
+
         Returns:
             String representation of the number.
         """
         return str(node.value)
-    
+
     def visit_variable(self, node):
         """Generate Python variable reference.
-        
+
         Returns:
             Variable name string.
         """

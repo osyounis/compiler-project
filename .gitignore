@@ -216,3 +216,11 @@ __marimo__/
 CLAUDE.md
 claude_plan.md
 .mcp.json
+*.claude.md
+.claudefiles
+
+# Mini Compiler specific
+output/
+*.generated.*
+examples/**/*_preprocessed.txt
+examples/output/

@@ -5,8 +5,8 @@ including comment removal, whitespace normalization, and tokenization.
 """
 
 import re
-from typing import List
 from pathlib import Path
+from typing import List
 
 
 class Preprocessor:
@@ -33,10 +33,10 @@ class Preprocessor:
     """
 
     # Regex pattern to match (* ... *) comments (including multiline)
-    COMMENT_PATTERN = re.compile(r'\(\*.*?\*\)', re.DOTALL)
+    COMMENT_PATTERN = re.compile(r"\(\*.*?\*\)", re.DOTALL)
 
     # Regex pattern to match one or more whitespace characters
-    WHITESPACE_PATTERN = re.compile(r'\s+')
+    WHITESPACE_PATTERN = re.compile(r"\s+")
 
     def process_file(self, filepath: str) -> List[str]:
         """Process source file and return token list.
@@ -62,7 +62,7 @@ class Preprocessor:
             >>> # 'Program ABC;' becomes ['program', 'abc;']
         """
         try:
-            with open(filepath, 'r', encoding='utf-8') as f:
+            with open(filepath, "r", encoding="utf-8") as f:
                 content = f.read()
         except FileNotFoundError:
             raise FileNotFoundError(f"Source file not found: {filepath}")
@@ -108,7 +108,7 @@ class Preprocessor:
             List of tokens (all lowercase).
         """
         # Remove all (* ... *) style comments
-        content = self.COMMENT_PATTERN.sub('', content)
+        content = self.COMMENT_PATTERN.sub("", content)
 
         # Process line by line, normalizing whitespace and removing blank lines
         tokens = []
@@ -116,7 +116,7 @@ class Preprocessor:
             line = line.strip()
             if line:  # Skip empty lines
                 # Normalize multiple spaces to single space
-                normalized = self.WHITESPACE_PATTERN.sub(' ', line)
+                normalized = self.WHITESPACE_PATTERN.sub(" ", line)
                 # Split into tokens and convert to lowercase for case-insensitive parsing
                 tokens.extend(token.lower() for token in normalized.split())
 
@@ -139,10 +139,10 @@ class Preprocessor:
         tokens = self.process_file(filepath)
 
         # Reconstruct text from tokens (space-separated)
-        preprocessed_content = ' '.join(tokens)
+        preprocessed_content = " ".join(tokens)
 
         try:
-            with open(output_path, 'w', encoding='utf-8') as f:
+            with open(output_path, "w", encoding="utf-8") as f:
                 f.write(preprocessed_content)
         except IOError as e:
             raise IOError(f"Error writing to file {output_path}: {e}")

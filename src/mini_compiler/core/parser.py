@@ -5,9 +5,10 @@ using table-driven predictive parsing with an explicit stack.
 """
 
 from typing import List, Optional, Set
-from .language import Language
-from ..utils.constants import EPSILON, END_MARKER
+
 from ..errors.error_reporter import ErrorReporter
+from ..utils.constants import END_MARKER, EPSILON
+from .language import Language
 
 
 class ParseResult:
@@ -27,7 +28,7 @@ class ParseResult:
         error_message: Optional[str] = None,
         position: Optional[int] = None,
         semantic_errors: Optional[ErrorReporter] = None,
-        ast=None
+        ast=None,
     ):
         """Initialize parse result.
 
@@ -101,11 +102,7 @@ class Parser:
             ParseResult indicating success/failure and any error details.
         """
         if not self._tokens:
-            return ParseResult(
-                False,
-                "Empty input - expected a program",
-                0
-            )
+            return ParseResult(False, "Empty input - expected a program", 0)
 
         # Initialize stack with end marker and start symbol
         stack = [END_MARKER, self._language.get_starting_state()]
@@ -125,7 +122,7 @@ class Parser:
                     return ParseResult(
                         False,
                         f"Syntax error at token '{token}' (position {token_index})",
-                        token_index
+                        token_index,
                     )
                 token_index = new_index
                 continue
@@ -135,7 +132,7 @@ class Parser:
                 return ParseResult(
                     False,
                     f"Unexpected token '{token}' (position {token_index}) - input too long",
-                    token_index
+                    token_index,
                 )
 
             control_char = stack.pop()
@@ -148,13 +145,13 @@ class Parser:
             # Lookup production in parsing table
             production = self._language.get_control_chars(control_char, token)
 
-            if production == '':
+            if production == "":
                 # No valid production - syntax error
                 return ParseResult(
                     False,
                     f"Unexpected token '{token}' at position {token_index} "
                     f"(expected something else for {control_char})",
-                    token_index
+                    token_index,
                 )
             elif production == EPSILON:
                 # Epsilon production - continue without consuming token
@@ -169,17 +166,11 @@ class Parser:
             return ParseResult(True)
         else:
             return ParseResult(
-                False,
-                "Unexpected end of input (incomplete program)",
-                token_index
+                False, "Unexpected end of input (incomplete program)", token_index
             )
 
     def _process_multichar_token(
-        self,
-        token: str,
-        stack: List[str],
-        position: int,
-        valid_symbols: Set[str]
+        self, token: str, stack: List[str], position: int, valid_symbols: Set[str]
     ) -> tuple[bool, int]:
         """Process multi-character token character by character.
 
@@ -215,7 +206,7 @@ class Parser:
             # Lookup production for this character
             production = self._language.get_control_chars(control_char, char)
 
-            if production == '':
+            if production == "":
                 # No valid production - error
                 return False, position
             elif production == EPSILON:
@@ -255,14 +246,12 @@ class Parser:
 
         # Syntax OK - run semantic analysis
         from .semantic_analyzer import SemanticAnalyzer
+
         analyzer = SemanticAnalyzer()
         semantic_errors = analyzer.analyze(self._tokens)
 
         # Create result with semantic errors
-        return ParseResult(
-            accepted=True,
-            semantic_errors=semantic_errors
-        )
+        return ParseResult(accepted=True, semantic_errors=semantic_errors)
 
     def parse_with_ast(self) -> ParseResult:
         """Parse and build Abstract Syntax Tree.
@@ -289,18 +278,15 @@ class Parser:
 
         # Syntax OK - build AST
         from .ast_builder import ASTBuilder
+
         builder = ASTBuilder(self._tokens)
 
         try:
             ast = builder.build()
-            return ParseResult(
-                accepted=True,
-                ast=ast
-            )
+            return ParseResult(accepted=True, ast=ast)
         except Exception as e:
             return ParseResult(
-                accepted=False,
-                error_message=f"Failed to build AST: {e}"
+                accepted=False, error_message=f"Failed to build AST: {e}"
             )
 
 
@@ -312,7 +298,7 @@ class Trace:
     implementation but will be removed in a future version. Use Parser directly.
     """
 
-    def __init__(self, user_input: 'InputStatement', language: Language) -> None:
+    def __init__(self, user_input: "InputStatement", language: Language) -> None:
         """Initialize Trace with legacy InputStatement interface."""
         tokens = user_input.get_statement()
         parser = Parser(language, tokens)
@@ -339,7 +325,7 @@ class InputStatement:
         """Initialize InputStatement by reading and tokenizing a file."""
         self._accepted = None
 
-        with open(filename, 'r', encoding='utf-8') as f_obj:
+        with open(filename, "r", encoding="utf-8") as f_obj:
             lines = f_obj.readlines()
         content = [line.strip().split() for line in lines]
 
