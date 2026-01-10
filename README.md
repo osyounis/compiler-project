@@ -11,7 +11,7 @@
 
 ## Overview
 
-Mini Compiler is a full compiler pipeline that transforms programs written in a simple Pascal-like language into executable Python code. What began as a CS 323 (Compilers) class project has been substantially expanded into a production-quality codebase showcasing professional development practices.
+Mini Compiler is a full compiler pipeline that transforms programs written in a simple Pascal-like language into executable Python code. What began as a CPSC 323 (Compilers) class project has been substantially expanded into a production-quality codebase showcasing professional development practices.
 
 **The transformation from academic code to portfolio project involved:**
 - Complete architectural refactoring from monolithic 339-line script to modular package
@@ -19,7 +19,7 @@ Mini Compiler is a full compiler pipeline that transforms programs written in a 
 - Adding comprehensive error detection and reporting (Part III requirement from course)
 - Implementing AST-based code generation (Part II requirement from course)
 - Building professional CLI with argparse and multiple commands
-- Creating 85-test suite with pytest achieving 72% coverage (86% excluding legacy code)
+- Creating 85-test suite with pytest achieving 71% coverage (85% excluding legacy code)
 - Setting up CI/CD pipeline with GitHub Actions across 5 Python versions
 - Following Google Python Style Guide with full type hints and docstrings
 - Proper Python packaging with pip installability
@@ -40,7 +40,7 @@ Mini Compiler is a full compiler pipeline that transforms programs written in a 
 - **Python Code Generation**: Translates source to executable Python with type hints
 - **Error Reporting**: Detailed syntax and semantic error messages with line numbers
 - **CLI Interface**: Professional command-line tool with validation and compilation modes
-- **Comprehensive Testing**: 85 tests with pytest, achieving 72% coverage (86% excluding legacy code)
+- **Comprehensive Testing**: 85 tests with pytest, achieving 71% coverage (86% excluding legacy code)
 - **CI/CD Pipeline**: Automated testing across Python 3.10-3.14 with GitHub Actions
 - **Professional Packaging**: Installable via pip with proper setup.py
 
@@ -107,21 +107,21 @@ The compiler processes a simple imperative language with Pascal-like syntax:
 ### Grammar (Simplified BNF)
 
 ```bnf
-Program        → program Identifier ; DeclarationBlock begin StatementList end
-DeclarationBlock → var IdentifierList : integer ;
-IdentifierList → Identifier IdentifierListTail
-IdentifierListTail → , Identifier IdentifierListTail | ε
-StatementList  → Statement StatementListTail
-StatementListTail → Statement StatementListTail | ε
-Statement      → Assignment | PrintStatement
-Assignment     → Identifier = Expression ;
-PrintStatement → print ( [Label ,] Identifier ) ;
-Expression     → Term ExpressionTail
-ExpressionTail → + Term ExpressionTail | - Term ExpressionTail | ε
-Term           → Factor TermTail
-TermTail       → * Factor TermTail | / Factor TermTail | ε
-Factor         → ( Expression ) | Number | Identifier
-Number         → [Sign] Digit NumberTail
+Program        -> program Identifier ; DeclarationBlock begin StatementList end
+DeclarationBlock -> var IdentifierList : integer ;
+IdentifierList -> Identifier IdentifierListTail
+IdentifierListTail -> , Identifier IdentifierListTail | ε
+StatementList  -> Statement StatementListTail
+StatementListTail -> Statement StatementListTail | ε
+Statement      -> Assignment | PrintStatement
+Assignment     -> Identifier = Expression ;
+PrintStatement -> print ( [Label ,] Identifier ) ;
+Expression     -> Term ExpressionTail
+ExpressionTail -> + Term ExpressionTail | - Term ExpressionTail | ε
+Term           -> Factor TermTail
+TermTail       -> * Factor TermTail | / Factor TermTail | ε
+Factor         -> ( Expression ) | Number | Identifier
+Number         -> [Sign] Digit NumberTail
 ```
 
 ### Lexical Conventions
@@ -229,7 +229,7 @@ The test suite includes:
 - **9 tests** for Integration (end-to-end compilation pipeline)
 - **9 tests** for CLI (command-line interface, verbose mode, edge cases)
 
-**Coverage**: 72% overall (86% excluding legacy code)
+**Coverage**: 71% overall (85% excluding legacy code)
 
 ### Continuous Integration
 
@@ -291,7 +291,7 @@ See `src/mini_compiler/utils/constants.py` for the complete parsing table.
 
 ## Academic Background
 
-This project originated as the final project for **CS 323: Compilers** at California State University, Fullerton (Fall 2024). The course covered formal language theory, parsing algorithms, semantic analysis, and code generation.
+This project originated as the final project for **CPSC 323: Compilers** at California State University, Fullerton (Fall 2024). The course covered formal language theory, parsing algorithms, semantic analysis, and code generation.
 
 ### From Academic Project to Portfolio Piece
 
@@ -301,21 +301,21 @@ This project originated as the final project for **CS 323: Compilers** at Califo
 - Part III: Implement error detection
 
 **Enhancements Made:**
-1. **Architectural Refactoring** (Phase 1-3)
+1. **Architectural Refactoring**
    - Split monolithic 339-line script into 7 focused modules
-   - Renamed all 23 grammar symbols for clarity (P → Program, etc.)
+   - Renamed all 23 grammar symbols for clarity (P -> Program, etc.)
    - Extracted Language, Parser, and Preprocessor classes
    - Created professional CLI with argparse
 
-2. **Missing Feature Implementation** (Phase 4)
-   - Built complete error detection system (Part III)
-   - Created AST-based code generation (Part II)
+2. **Missing Feature Implementation**
+   - Built complete error detection system
+   - Created AST-based code generation
    - Added semantic analysis for variable tracking
    - Implemented ErrorReporter with detailed messages
 
-3. **Testing Infrastructure** (Phase 5)
+3. **Testing Infrastructure**
    - Created 78-test suite with pytest
-   - Achieved 73% code coverage
+   - Achieved 71% code coverage
    - Added integration tests for end-to-end validation
    - Implemented CLI testing with mocked arguments
 
@@ -325,7 +325,7 @@ This project originated as the final project for **CS 323: Compilers** at Califo
    - Type checking with mypy
    - Coverage reporting to Codecov
 
-5. **Professional Packaging** (Phase 7)
+5. **Professional Packaging**
    - Created proper setup.py for pip installation
    - Added console script entry point (`mini-compiler` command)
    - Configured proper package metadata
@@ -356,12 +356,12 @@ This project is licensed under the GNU General Public License v3.0. See [LICENSE
 
 <!-- Update these links with your actual profiles -->
 - GitHub: [@osyounis](https://github.com/osyounis)
-- LinkedIn: [Your LinkedIn Profile](https://linkedin.com/in/yourprofile)
-- Email: your.email@example.com
+- LinkedIn: [Omar Younis](www.linkedin.com/in/omar-younis)
+- Website: [hendaseh.com](https://www.hendaseh.com/)
 
 ## Acknowledgments
 
-- **CS 323: Compilers**, California State University, Fullerton (Fall 2024)
+- **CPSC 323: Compilers**, California State University, Fullerton (Fall 2024)
 - Course textbook: *Compilers: Principles, Techniques, and Tools* by Aho, Lam, Sethi, and Ullman
 - Python community for excellent tooling (pytest, black, mypy)
 - GitHub Actions for free CI/CD for open source projects
